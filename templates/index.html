@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Churn Prediction</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .btn-custom {
+            background: #ff7eb3;
+            border: none;
+            padding: 10px 20px;
+            transition: 0.3s;
+        }
+        .btn-custom:hover {
+            background: #ff4f81;
+        }
+        .fade-in {
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+        .fade-in.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="mb-4">Churn Prediction</h2>
+        <form id="predictForm">
+            <div class="mb-3">
+                <input type="number" id="CreditScore" class="form-control" placeholder="Credit Score" required>
+            </div>
+            <div class="mb-3">
+                <select id="Gender" class="form-control" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <input type="number" id="Age" class="form-control" placeholder="Age" required>
+            </div>
+            <div class="mb-3">
+                <input type="number" id="Tenure" class="form-control" placeholder="Tenure" required>
+            </div>
+            <div class="mb-3">
+                <input type="number" id="Balance" class="form-control" placeholder="Balance" required>
+            </div>
+            <div class="mb-3">
+                <input type="number" id="HasCrCard" class="form-control" placeholder="Has Credit Card (1/0)" required>
+            </div>
+            <button type="submit" class="btn btn-custom">Predict</button>
+        </form>
+        
+        <h3 id="result" class="mt-4 fade-in"></h3>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $("#predictForm").submit(function(event) {
+                event.preventDefault();
+                
+                let data = {
+                    CreditScore: $("#CreditScore").val(),
+                    Gender: $("#Gender").val(),
+                    Age: $("#Age").val(),
+                    Tenure: $("#Tenure").val(),
+                    Balance: $("#Balance").val(),
+                    HasCrCard: $("#HasCrCard").val()
+                };
+                
+                $("#result").removeClass("show").text("Predicting...");
+                
+                $.ajax({
+                    url: "/predict",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        $("#result").text("Prediction: " + response.prediction).addClass("show");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
